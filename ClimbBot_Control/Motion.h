@@ -3,11 +3,22 @@
 
 void MOT_UpdateSpeed()
 {
-  EncoderError = leftOdometer - rightOdometer;
+
+  
+  
+  MOT_i32EncoderError = ENC_vi32LeftOdometer - ENC_vi32RightOdometer;
   EncoderErrorChange = EncoderError - OldEncoderError;
 
-  CorrectionFactor = (EncoderError * KProportional) + (EncoderErrorChange * KIntegral)
+  ProportionalFactor = EncoderError * ProportionalCoeff;
+  IntegralFactor += EncoderError * IntegralCoeff;
+  DerivativeFactor = EncoderErrorChange * DerivativeCoeff; 
 
+  CorrectionFactor = ProportionalFactor + IntegralFactor + DerivativeFactor;
+
+
+  MOT_WriteToMotors();
+
+  
   
 }
 
@@ -17,10 +28,10 @@ void MOT_UpdateSpeed()
 void MOT_Init()
 {
   
-  dForwardSpeed = 250;  // max 255; min ~150 before motor stall
-  dReverseSpeed = 250;
-  dLeftSpeed = 170;
-  dRightSpeed = 170;
+  dForwardSpeed = 49152;  // max 65536, 65536*0.75 = 49152
+  dReverseSpeed = 49152;
+  dLeftSpeed = 39321;
+  dRightSpeed = 39321;
   
   //setup PWM for motors
   ledcAttachPin(ciMotorLeftA, 7); // assign Motors pins to channels
@@ -31,29 +42,25 @@ void MOT_Init()
   // Initialize channels 
   // channels 0-15, resolution 1-16 bits, freq limits depend on resolution
   // ledcSetup(uint8_t channel, uint32_t freq, uint8_t resolution_bits);
-  ledcSetup(7, 20000, 8); // 20mS PWM, 8-bit resolution
-  ledcSetup(6, 20000, 8);
-  ledcSetup(5, 20000, 8);
-  ledcSetup(4, 20000, 8);
+  ledcSetup(7, 20000, 16); // 20mS PWM, 8-bit resolution
+  ledcSetup(6, 20000, 16);
+  ledcSetup(5, 20000, 16);
+  ledcSetup(4, 20000, 16);
   
 }
 
-void MOT_SetMotorDirection()
+void MOT_SetDriveDirection()
 {
   
 }
 
-void MOT_SetMotorSpeed()
-{
-  
-}
 
-void MOT_WriteToMotors(unsigned int driveMode)
+void MOT_WriteToMotors()
 {
-
-          ledcWrite(6,0);
-          ledcWrite(7,ui8LeftWorkingSpeed);
-          ledcWrite(4,0);
-          ledcWrite(5,ui8RightWorkingSpeed);
+          //Forward
+          ledcWrite(6,0); //LeftBackward
+          ledcWrite(7,ui16LeftWorkingSpeed - CorrectionFactor); //Left Forward
+          ledcWrite(4,0); //Right Backward
+          ledcWrite(5,ui16RightWorkingSpeed); //Right Forward
   
 }

@@ -12,8 +12,8 @@
      // only toggle the run condition if the new button state is LOW
      if (iButtonState == LOW)
      {
-       ENC_ClearLeftOdometer();
-       ENC_ClearRightOdometer();
+       ENC_ClearENC_vi32LeftOdometer();
+       ENC_ClearENC_vi32RightOdometer();
        btRun = !btRun;
         Serial.println(btRun);
        // if stopping, reset motor states and stop motors

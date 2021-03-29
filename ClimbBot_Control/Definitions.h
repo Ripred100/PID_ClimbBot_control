@@ -66,31 +66,39 @@ const int ciServoChannel = 10;
 //Drive Constants
 const uint8_t ci8RightTurn = 27;
 const uint8_t ci8LeftTurn = 26;
-const uint8_t cui8StartingSpeed = 140;
+const uint16_t cui16StartingSpeed = 49152;
 
 //Drive Variables
-uint8_t ui8LeftWorkingSpeed = cui8StartingSpeed;
-uint8_t ui8RightWorkingSpeed = cui8StartingSpeed;
+uint8_t ui16LeftWorkingSpeed = cui16StartingSpeed;
+uint8_t ui16RightWorkingSpeed = cui16StartingSpeed;
 
 double dForwardSpeed;
 double dReverseSpeed;
 double dLeftSpeed;
 double dRightSpeed;
 
-uint8_t CR1_ui8WheelSpeed;
-uint8_t CR1_ui8WheelSpeedAdjustmentFactor;
-uint8_t CR1_ui8LeftWheelSpeed;
-uint8_t CR1_ui8RightWheelSpeed;
+uint16_t CR1_ui16WheelSpeed;
+uint16_t CR1_ui16LeftWheelSpeed;
+uint16_t CR1_ui16RightWheelSpeed;
+
+//PID Variables (In Motion)
+int CorrectionFactor = 0;
+
+int ProportionalCoeff = 300;
+int IntegralCoeff = 15;
+int DerivativeCoef = 100; 
+
+int16_t MOT_i32EncoderError;
 
 //Drive Flags
 volatile boolean btMotorTimerPriorityFlag = false; //does distance (false) or MotorRunTime (true) take priority for driving?
 
 //Encoder Variables
- volatile int32_t ENC_vi32LeftOdometer;
- volatile int32_t ENC_vi32RightOdometer;
+ volatile int32_t ENC_vi32ENC_vi32LeftOdometer;
+ volatile int32_t ENC_vi32ENC_vi32RightOdometer;
 
-  volatile int32_t ENC_vi32LeftOdometerCompare;
- volatile int32_t ENC_vi32RightOdometerCompare;
+ volatile int32_t ENC_vi32ENC_vi32LeftOdometerCompare;
+ volatile int32_t ENC_vi32ENC_vi32RightOdometerCompare;
 
 //Encoder Flags
  volatile boolean ENC_btLeftMotorRunningFlag;
@@ -149,8 +157,8 @@ unsigned int EC_uiCurrentEvent;
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
 #include "Servo.h"
-#include "Motion.h"
 #include "Encoder.h"
+#include "Motion.h"
 #include "InputControl.h"
 #include "EventController.h"
 

@@ -23,13 +23,14 @@ void EC_DriveEventHandler()
   if(EC_IsEventInProgress())
   {
     MOT_UpdateSpeed();
-
     
     
   }
   else if (CR1_ulMotorTimerNow - CR1_ulMotorTimerPrevious >= CR1_ciMotorRunTime && !(EC_IsEventInProgress()))
   {
     CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
+
+    ENC_SetDistance(500, 500);
   }
   
 }
