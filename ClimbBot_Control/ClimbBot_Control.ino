@@ -9,7 +9,7 @@
 void setup() {
 
   
-  Serial.begin(115200); 
+  Serial.begin(9600); 
  
 
 
@@ -27,8 +27,109 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // Code that runs outside of main switch case loop
   IC_CheckButtonUpdate();
+
+
+  CR1_ulMainTimerNow = micros();
+ if(CR1_ulMainTimerNow - CR1_ulMainTimerPrevious >= CR1_ciMainTimer)
+ {
+   
+   CR1_ulMainTimerPrevious = CR1_ulMainTimerNow;
+    
+   switch(CR1_ucMainTimerCaseCore1)  //10 Cases, each taking 0.1ms aproximately. We can use this timing to calibrate PWM 
+   {
+    case 0: //Driving switch case
+    {
+      if(btRun)
+      {
+        EC_MainEventHandler();
+      }
+
+    
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 1:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 2:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 3:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 4:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 5:
+    {
+
+      
+    
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 6:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 7:
+    {
+
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 8:
+    {
+      
+        CR1_ucMainTimerCaseCore1 += 1;
+      break;
+    }
+//----------------------------------------------------------------------------------
+    case 9:
+    {
+        SmartLEDs.setPixelColor(0, 25, 0, ENC_vi32LeftOdometer%25);
+        SmartLEDs.setPixelColor(1, 25, 0, ENC_vi32RightOdometer%25);
+        Serial.println("Left : " + String(ENC_vi32LeftOdometer));
+        Serial.println("Right : " + String(ENC_vi32RightOdometer));
+        SmartLEDs.show();
+
+        CR1_ucMainTimerCaseCore1 = 0;
+      break;
+    }
+//----------------------------------------------------------------------------------
+   }
 
   SmartLEDs.setPixelColor(0, 25, 0, ENC_vi32LeftOdometer%25);
   SmartLEDs.setPixelColor(1, 25, 0, ENC_vi32RightOdometer%25);
@@ -47,4 +148,5 @@ void loop() {
    // Serial.println((vui32test2 - vui32test1)* 3 );
  }
 
+}
 }

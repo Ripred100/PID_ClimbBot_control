@@ -23,5 +23,4 @@ void setupMotion ()
   ledcSetup(5, 20000, 8);
   ledcSetup(4, 20000, 8);
   
-
 }

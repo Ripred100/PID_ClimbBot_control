@@ -135,6 +135,12 @@ const int CR1_ciMotorRunTime = 1000;
 const long CR1_clDebounceDelay = 50;
 const long CR1_clReadTimeout = 220;
 
+//Event Controller Variables
+unsigned int EC_uiCurrentEvent;
+
+//Event Controller Flags
+volatile boolean 
+
 
 
 #include <ESP32Servo.h>
@@ -146,5 +152,6 @@ const long CR1_clReadTimeout = 220;
 #include "Motion.h"
 #include "Encoder.h"
 #include "InputControl.h"
+#include "EventController.h"
 
  Adafruit_NeoPixel SmartLEDs(2, 25, NEO_GRB + NEO_KHZ400);
