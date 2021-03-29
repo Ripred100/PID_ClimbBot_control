@@ -66,6 +66,16 @@ const int ciServoChannel = 10;
 //Drive Constants
 const uint8_t ci8RightTurn = 27;
 const uint8_t ci8LeftTurn = 26;
+const uint8_t cui8StartingSpeed = 140;
+
+//Drive Variables
+uint8_t ui8LeftWorkingSpeed = cui8StartingSpeed;
+uint8_t ui8RightWorkingSpeed = cui8StartingSpeed;
+
+double dForwardSpeed;
+double dReverseSpeed;
+double dLeftSpeed;
+double dRightSpeed;
 
 uint8_t CR1_ui8WheelSpeed;
 uint8_t CR1_ui8WheelSpeedAdjustmentFactor;
@@ -75,6 +85,16 @@ uint8_t CR1_ui8RightWheelSpeed;
 //Drive Flags
 volatile boolean btMotorTimerPriorityFlag = false; //does distance (false) or MotorRunTime (true) take priority for driving?
 
+//Encoder Variables
+ volatile int32_t ENC_vi32LeftOdometer;
+ volatile int32_t ENC_vi32RightOdometer;
+
+  volatile int32_t ENC_vi32LeftOdometerCompare;
+ volatile int32_t ENC_vi32RightOdometerCompare;
+
+//Encoder Flags
+ volatile boolean ENC_btLeftMotorRunningFlag;
+ volatile boolean ENC_btRightMotorRunningFlag;
 
 //Main Loop variables
 unsigned char CR1_ucMainTimerCaseCore1;
@@ -94,6 +114,7 @@ unsigned long CR1_ulMotorTimerPrevious;
 unsigned long CR1_ulMotorTimerNow;
 unsigned char ucNextMotorStateIndex = 1;
 unsigned char ucMotorStateIndex = 0;
+unsigned char ucMotorState = 0;
 
 unsigned long CR1_ulHeartbeatTimerPrevious;
 unsigned long CR1_ulHeartbeatTimerNow;
@@ -114,9 +135,16 @@ const int CR1_ciMotorRunTime = 1000;
 const long CR1_clDebounceDelay = 50;
 const long CR1_clReadTimeout = 220;
 
+
+
 #include <ESP32Servo.h>
 #include <esp_task_wdt.h>
 
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
 #include "Servo.h"
+#include "Motion.h"
+#include "Encoder.h"
+#include "InputControl.h"
+
+ Adafruit_NeoPixel SmartLEDs(2, 25, NEO_GRB + NEO_KHZ400);

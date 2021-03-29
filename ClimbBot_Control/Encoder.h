@@ -1,35 +1,7 @@
 
- #ifndef ENCODER_H
-  #define ENCODER_H 1
-
-//---------------------------------------------------------------------------
-
-#include "Motion.h";
-
-void ENC_Init()
-{
-   //set pin modes
-  pinMode(ciEncoderLeftA, INPUT_PULLUP);
-  pinMode(ciEncoderLeftB, INPUT_PULLUP);
-  pinMode(ciEncoderRightA, INPUT_PULLUP);
-  pinMode(ciEncoderRightB, INPUT_PULLUP);
-
-   // enable GPIO interrupt on change
-  attachInterrupt(ciEncoderLeftA, ENC_isrLeftA, CHANGE);
-  attachInterrupt(ciEncoderLeftB, ENC_isrLeftB, CHANGE);
-  attachInterrupt(ciEncoderRightA, ENC_isrRightA, CHANGE);
-  attachInterrupt(ciEncoderRightB, ENC_isrRightB, CHANGE);
-
-  ENC_btLeftMotorRunningFlag = false;
-  ENC_btRightMotorRunningFlag = false;
-
-  
 
 
-  //check to see if calibration is in eeprom and retreive
-  
-  
-}
+
 
 void ENC_Disable()
 {
@@ -129,7 +101,97 @@ void IRAM_ATTR ENC_isrLeftA()
     ENC_vi32LeftOdometer -= 1;
   }
 
-  ENC_CheckDistance()
+  ENC_CheckDistance();
+
+}
+
+void IRAM_ATTR ENC_isrLeftB()
+{
+  volatile static int32_t ENC_vsi32LastTime;
+  volatile static int32_t ENC_vsi32ThisTime;
+
+  if((digitalRead(ciEncoderLeftA) && digitalRead(ciEncoderLeftB)) || ((digitalRead(ciEncoderLeftA) == 0 && digitalRead(ciEncoderLeftB) == 0)))
+  {
+    ENC_vi32LeftOdometer -= 1;
+  }
+  else
+  {
+    ENC_vi32LeftOdometer += 1;
+  }
+
+  ENC_CheckDistance();
+}
 
 
+void IRAM_ATTR ENC_isrRightA()
+{
+  volatile static int32_t ENC_vsi32LastTime;
+  volatile static int32_t ENC_vsi32ThisTime;
+  
+  if((digitalRead(ciEncoderRightA) && digitalRead(ciEncoderRightB)) || ((digitalRead(ciEncoderRightA) == 0 && digitalRead(ciEncoderRightB) == 0)))
+  {
+    ENC_vi32RightOdometer -= 1;
+  }
+  else
+  {
+    ENC_vi32RightOdometer += 1;
+  }
+
+  ENC_CheckDistance();
+}
+
+
+
+void IRAM_ATTR ENC_isrRightB()
+{
+  volatile static int32_t ENC_vsi32LastTime;
+  volatile static int32_t ENC_vsi32ThisTime;
+
+    if((digitalRead(ciEncoderRightA) && digitalRead(ciEncoderRightB)) || ((digitalRead(ciEncoderRightA) == 0 && digitalRead(ciEncoderRightB) == 0)))
+  {
+    ENC_vi32RightOdometer += 1;
+  }
+  else
+  {
+    ENC_vi32RightOdometer -= 1;
+  }
+
+  ENC_CheckDistance();
+}
+
+void ENC_Init()
+{
+   //set pin modes
+  pinMode(ciEncoderLeftA, INPUT_PULLUP);
+  pinMode(ciEncoderLeftB, INPUT_PULLUP);
+  pinMode(ciEncoderRightA, INPUT_PULLUP);
+  pinMode(ciEncoderRightB, INPUT_PULLUP);
+
+   // enable GPIO interrupt on change
+  attachInterrupt(ciEncoderLeftA, ENC_isrLeftA, CHANGE);
+  attachInterrupt(ciEncoderLeftB, ENC_isrLeftB, CHANGE);
+  attachInterrupt(ciEncoderRightA, ENC_isrRightA, CHANGE);
+  attachInterrupt(ciEncoderRightB, ENC_isrRightB, CHANGE);
+
+  ENC_btLeftMotorRunningFlag = false;
+  ENC_btRightMotorRunningFlag = false;
+
+  
+
+
+  //check to see if calibration is in eeprom and retreive
+  
+  
+}
+
+void ENC_ClearLeftOdometer()
+{
+  ENC_vi32LeftOdometer = 0;
+ 
+}
+
+
+void ENC_ClearRightOdometer()
+{
+  ENC_vi32RightOdometer = 0;
 }
