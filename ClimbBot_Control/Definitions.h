@@ -88,6 +88,7 @@ int ProportionalFactor;
 int IntegralFactor;
 int DerivativeFactor;
 //--------------------------------------------------------------- IMPORTANT----------------- //These are the PID control Constants. Look at MOT_UpdateSpeed() for use
+// Good PID explination: https://www.youtube.com/watch?v=fusr9eTceEo
 int ProportionalCoeff = 1000;
 int IntegralCoeff = 15;
 int DerivativeCoeff = 40; 
