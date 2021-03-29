@@ -31,7 +31,7 @@ void ENC_CheckDistance()
 {
     if(ENC_btLeftMotorRunningFlag)
   {
-    if(ENC_vi32ENC_vi32LeftOdometer == ENC_vi32ENC_vi32LeftOdometerCompare)
+    if(ENC_vi32LeftOdometer == ENC_vi32LeftOdometerCompare)
     {
       
       ENC_btLeftMotorRunningFlag = false;
@@ -51,7 +51,7 @@ void ENC_CheckDistance()
 
     if(ENC_btRightMotorRunningFlag)
   {
-    if(ENC_vi32ENC_vi32RightOdometer == ENC_vi32ENC_vi32RightOdometerCompare)
+    if(ENC_vi32RightOdometer == ENC_vi32RightOdometerCompare)
     {
       
       ENC_btLeftMotorRunningFlag = false;
@@ -77,8 +77,8 @@ void ENC_CheckDistance()
 void ENC_SetDistance(int32_t i32LeftDistance, int32_t i32RightDistance)
 {
   
-   ENC_vi32ENC_vi32LeftOdometerCompare = ENC_vi32ENC_vi32LeftOdometer + i32LeftDistance;
-   ENC_vi32ENC_vi32RightOdometerCompare = ENC_vi32ENC_vi32RightOdometer + i32RightDistance;
+   ENC_vi32LeftOdometerCompare = ENC_vi32LeftOdometer + i32LeftDistance;
+   ENC_vi32RightOdometerCompare = ENC_vi32RightOdometer + i32RightDistance;
    ENC_btLeftMotorRunningFlag = true;
    ENC_btRightMotorRunningFlag = true;
    ui16LeftWorkingSpeed = cui16StartingSpeed;
@@ -94,11 +94,11 @@ void IRAM_ATTR ENC_isrLeftA()
 
      if((digitalRead(ciEncoderLeftA) && digitalRead(ciEncoderLeftB)) || ((digitalRead(ciEncoderLeftA) == 0 && digitalRead(ciEncoderLeftB) == 0)))
   {
-    ENC_vi32ENC_vi32LeftOdometer += 1;
+    ENC_vi32LeftOdometer += 1;
   }
   else
   {
-    ENC_vi32ENC_vi32LeftOdometer -= 1;
+    ENC_vi32LeftOdometer -= 1;
   }
 
   ENC_CheckDistance();
@@ -112,11 +112,11 @@ void IRAM_ATTR ENC_isrLeftB()
 
   if((digitalRead(ciEncoderLeftA) && digitalRead(ciEncoderLeftB)) || ((digitalRead(ciEncoderLeftA) == 0 && digitalRead(ciEncoderLeftB) == 0)))
   {
-    ENC_vi32ENC_vi32LeftOdometer -= 1;
+    ENC_vi32LeftOdometer -= 1;
   }
   else
   {
-    ENC_vi32ENC_vi32LeftOdometer += 1;
+    ENC_vi32LeftOdometer += 1;
   }
 
   ENC_CheckDistance();
@@ -130,11 +130,11 @@ void IRAM_ATTR ENC_isrRightA()
   
   if((digitalRead(ciEncoderRightA) && digitalRead(ciEncoderRightB)) || ((digitalRead(ciEncoderRightA) == 0 && digitalRead(ciEncoderRightB) == 0)))
   {
-    ENC_vi32ENC_vi32RightOdometer -= 1;
+    ENC_vi32RightOdometer -= 1;
   }
   else
   {
-    ENC_vi32ENC_vi32RightOdometer += 1;
+    ENC_vi32RightOdometer += 1;
   }
 
   ENC_CheckDistance();
@@ -149,11 +149,11 @@ void IRAM_ATTR ENC_isrRightB()
 
     if((digitalRead(ciEncoderRightA) && digitalRead(ciEncoderRightB)) || ((digitalRead(ciEncoderRightA) == 0 && digitalRead(ciEncoderRightB) == 0)))
   {
-    ENC_vi32ENC_vi32RightOdometer += 1;
+    ENC_vi32RightOdometer += 1;
   }
   else
   {
-    ENC_vi32ENC_vi32RightOdometer -= 1;
+    ENC_vi32RightOdometer -= 1;
   }
 
   ENC_CheckDistance();
@@ -186,12 +186,12 @@ void ENC_Init()
 
 void ENC_ClearENC_vi32LeftOdometer()
 {
-  ENC_vi32ENC_vi32LeftOdometer = 0;
+  ENC_vi32LeftOdometer = 0;
  
 }
 
 
 void ENC_ClearENC_vi32RightOdometer()
 {
-  ENC_vi32ENC_vi32RightOdometer = 0;
+  ENC_vi32RightOdometer = 0;
 }

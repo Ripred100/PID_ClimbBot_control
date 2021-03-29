@@ -119,10 +119,11 @@ void loop() {
 //----------------------------------------------------------------------------------
     case 9:
     {
-        SmartLEDs.setPixelColor(0, 25, 0, ENC_vi32ENC_vi32LeftOdometer%25);
-        SmartLEDs.setPixelColor(1, 25, 0, ENC_vi32ENC_vi32RightOdometer%25);
-        Serial.println("Left : " + String(ENC_vi32ENC_vi32LeftOdometer));
-        Serial.println("Right : " + String(ENC_vi32ENC_vi32RightOdometer));
+        SmartLEDs.setPixelColor(0, 25, 0, abs(ENC_vi32LeftOdometer)%50);
+        SmartLEDs.setPixelColor(1, 25, 0, abs(ENC_vi32RightOdometer)%50);
+//        Serial.println("Left : " + String(ENC_vi32LeftOdometer));
+//        Serial.println("Right : " + String(ENC_vi32RightOdometer));
+//        Serial.println("Correction : " + String(CorrectionFactor));
         SmartLEDs.show();
 
         CR1_ucMainTimerCaseCore1 = 0;
@@ -131,11 +132,7 @@ void loop() {
 //----------------------------------------------------------------------------------
    }
 
-  SmartLEDs.setPixelColor(0, 25, 0, ENC_vi32ENC_vi32LeftOdometer%25);
-  SmartLEDs.setPixelColor(1, 25, 0, ENC_vi32ENC_vi32RightOdometer%25);
-  Serial.println("Left : " + String(ENC_vi32ENC_vi32LeftOdometer));
-  Serial.println("Right : " + String(ENC_vi32ENC_vi32RightOdometer));
-  SmartLEDs.show();
+
 
 
   // Heartbeat LED

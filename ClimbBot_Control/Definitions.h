@@ -66,11 +66,11 @@ const int ciServoChannel = 10;
 //Drive Constants
 const uint8_t ci8RightTurn = 27;
 const uint8_t ci8LeftTurn = 26;
-const uint16_t cui16StartingSpeed = 49152;
+const uint16_t cui16StartingSpeed = 40000;
 
 //Drive Variables
-uint8_t ui16LeftWorkingSpeed = cui16StartingSpeed;
-uint8_t ui16RightWorkingSpeed = cui16StartingSpeed;
+uint16_t ui16LeftWorkingSpeed = cui16StartingSpeed;
+uint16_t ui16RightWorkingSpeed = cui16StartingSpeed;
 
 double dForwardSpeed;
 double dReverseSpeed;
@@ -84,21 +84,27 @@ uint16_t CR1_ui16RightWheelSpeed;
 //PID Variables (In Motion)
 int CorrectionFactor = 0;
 
-int ProportionalCoeff = 300;
-int IntegralCoeff = 15;
-int DerivativeCoef = 100; 
+int ProportionalFactor;
+int IntegralFactor;
+int DerivativeFactor;
 
-int16_t MOT_i32EncoderError;
+int ProportionalCoeff = 1000;
+int IntegralCoeff = 15;
+int DerivativeCoeff = 40; 
 
 //Drive Flags
 volatile boolean btMotorTimerPriorityFlag = false; //does distance (false) or MotorRunTime (true) take priority for driving?
 
 //Encoder Variables
- volatile int32_t ENC_vi32ENC_vi32LeftOdometer;
- volatile int32_t ENC_vi32ENC_vi32RightOdometer;
+ volatile int32_t ENC_vi32LeftOdometer;
+ volatile int32_t ENC_vi32RightOdometer;
 
- volatile int32_t ENC_vi32ENC_vi32LeftOdometerCompare;
- volatile int32_t ENC_vi32ENC_vi32RightOdometerCompare;
+ volatile int32_t ENC_vi32LeftOdometerCompare;
+ volatile int32_t ENC_vi32RightOdometerCompare;
+
+ int32_t MOT_i32EncoderErrorChange;
+ int32_t MOT_i32EncoderError = 0;
+ int32_t MOT_i32OldEncoderError = 0;
 
 //Encoder Flags
  volatile boolean ENC_btLeftMotorRunningFlag;

@@ -30,7 +30,7 @@ void EC_DriveEventHandler()
   {
     CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
 
-    ENC_SetDistance(500, 500);
+    ENC_SetDistance(200, 200);
   }
   
 }
