@@ -87,11 +87,11 @@ int CorrectionFactor = 0;
 int ProportionalFactor;
 int IntegralFactor;
 int DerivativeFactor;
-
+//--------------------------------------------------------------- IMPORTANT----------------- //These are the PID control Constants. Look at MOT_UpdateSpeed() for use
 int ProportionalCoeff = 1000;
 int IntegralCoeff = 15;
 int DerivativeCoeff = 40; 
-
+//---------------------------------------------------------------------------------
 //Drive Flags
 volatile boolean btMotorTimerPriorityFlag = false; //does distance (false) or MotorRunTime (true) take priority for driving?
 
