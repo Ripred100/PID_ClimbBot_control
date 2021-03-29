@@ -139,7 +139,7 @@ const long CR1_clReadTimeout = 220;
 unsigned int EC_uiCurrentEvent;
 
 //Event Controller Flags
-volatile boolean 
+
 
 
 

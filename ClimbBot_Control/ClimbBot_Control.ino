@@ -13,7 +13,7 @@ void setup() {
  
 
 
-   //setupMotion();
+   MOT_Init();
    //setupStepper();
    ENC_Init();
    pinMode(ciHeartbeatLED, OUTPUT);

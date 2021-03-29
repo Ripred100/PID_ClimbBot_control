@@ -1,7 +1,20 @@
 
 
 
-void setupMotion ()
+void MOT_UpdateSpeed()
+{
+  EncoderError = leftOdometer - rightOdometer;
+  EncoderErrorChange = EncoderError - OldEncoderError;
+
+  CorrectionFactor = (EncoderError * KProportional) + (EncoderErrorChange * KIntegral)
+
+  
+}
+
+
+
+
+void MOT_Init()
 {
   
   dForwardSpeed = 250;  // max 255; min ~150 before motor stall
@@ -22,5 +35,25 @@ void setupMotion ()
   ledcSetup(6, 20000, 8);
   ledcSetup(5, 20000, 8);
   ledcSetup(4, 20000, 8);
+  
+}
+
+void MOT_SetMotorDirection()
+{
+  
+}
+
+void MOT_SetMotorSpeed()
+{
+  
+}
+
+void MOT_WriteToMotors(unsigned int driveMode)
+{
+
+          ledcWrite(6,0);
+          ledcWrite(7,ui8LeftWorkingSpeed);
+          ledcWrite(4,0);
+          ledcWrite(5,ui8RightWorkingSpeed);
   
 }

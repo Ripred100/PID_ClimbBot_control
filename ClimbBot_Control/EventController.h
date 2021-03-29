@@ -20,12 +20,16 @@ void EC_DriveEventHandler()
 {
   
   CR1_ulMotorTimerNow = millis();
-  if(CR1_ulMotorTimerNow - CR1_ulMotorTimerPrevious >= CR1_ciMotorRunTime && !(EC_IsEventInProgress()))
+  if(EC_IsEventInProgress())
   {
-    CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
+    MOT_UpdateSpeed();
 
     
     
+  }
+  else if (CR1_ulMotorTimerNow - CR1_ulMotorTimerPrevious >= CR1_ciMotorRunTime && !(EC_IsEventInProgress()))
+  {
+    CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
   }
   
 }
