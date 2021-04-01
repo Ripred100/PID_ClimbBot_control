@@ -36,11 +36,34 @@ uint16_t MOT_GetAdjustedSpeed(int wheelID)
   
   if(wheelID == 0)//left wheel
   {
-    return (ui16LeftWorkingSpeed + CorrectionFactor);
+    if((iLeftWorkingSpeed + (CorrectionFactor/2)) <= 65535 && (iLeftWorkingSpeed + (CorrectionFactor/2)) >= 0 )
+    {
+          return (iLeftWorkingSpeed + (CorrectionFactor/2));
+    }
+    else if((iLeftWorkingSpeed + (CorrectionFactor/2)) > 65535)
+    {
+      return 65535;
+    }
+    else
+    {
+      return 0;
+    }
+
   }
   else if(wheelID == 1)//right wheel
   {
-    return ui16RightWorkingSpeed;
+    if((iRightWorkingSpeed - (CorrectionFactor/2)) <= 65535 && (iRightWorkingSpeed - (CorrectionFactor/2)) >= 0 )
+    {
+          return (iRightWorkingSpeed - (CorrectionFactor/2));
+    }
+    else if((iRightWorkingSpeed - (CorrectionFactor/2)) > 65535)
+    {
+      return 65535;
+    }
+    else
+    {
+      return 0;
+    }
   }
   else
   {

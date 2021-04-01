@@ -36,14 +36,11 @@ void ENC_CheckDistance()
       
       ENC_btLeftMotorRunningFlag = false;
       ENC_btRightMotorRunningFlag = false;
-      digitalWrite(ciMotorLeftA,HIGH);
-      digitalWrite(ciMotorLeftB,HIGH);
-      digitalWrite(ciMotorRightA,HIGH);
-      digitalWrite(ciMotorRightB,HIGH);
-      ledcWrite(6,255);
-      ledcWrite(7,255);  //stop with braking Left motor 
-      ledcWrite(5,255);
-      ledcWrite(4,255);  //stop with braking Right motor 
+
+      ledcWrite(6,65535);
+      ledcWrite(7,65535);  //stop with braking Left motor 
+      ledcWrite(5,65535);
+      ledcWrite(4,65535);  //stop with braking Right motor 
       
 
     }    
@@ -56,14 +53,11 @@ void ENC_CheckDistance()
       
       ENC_btLeftMotorRunningFlag = false;
       ENC_btRightMotorRunningFlag = false;
-      digitalWrite(ciMotorLeftA,HIGH);
-      digitalWrite(ciMotorLeftB,HIGH);
-      digitalWrite(ciMotorRightA,HIGH);
-      digitalWrite(ciMotorRightB,HIGH);
-      ledcWrite(6,255);
-      ledcWrite(7,255);  //stop with braking Left motor 
-      ledcWrite(5,255);
-      ledcWrite(4,255);  //stop with braking Right motor 
+
+      ledcWrite(6,65535);
+      ledcWrite(7,65535);  //stop with braking Left motor 
+      ledcWrite(5,65535);
+      ledcWrite(4,65535);  //stop with braking Right motor 
       
 
     }
@@ -81,8 +75,8 @@ void ENC_SetDistance(int32_t i32LeftDistance, int32_t i32RightDistance)
    ENC_vi32RightOdometerCompare = ENC_vi32RightOdometer + i32RightDistance;
    ENC_btLeftMotorRunningFlag = true;
    ENC_btRightMotorRunningFlag = true;
-   ui16LeftWorkingSpeed = cui16StartingSpeed;
-   ui16RightWorkingSpeed = cui16StartingSpeed;
+   iLeftWorkingSpeed = cui16StartingSpeed;
+   iRightWorkingSpeed = cui16StartingSpeed;
 
 }
 

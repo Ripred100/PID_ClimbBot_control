@@ -69,8 +69,8 @@ const uint8_t ci8LeftTurn = 26;
 const uint16_t cui16StartingSpeed = 40000;
 
 //Drive Variables
-uint16_t ui16LeftWorkingSpeed = cui16StartingSpeed;
-uint16_t ui16RightWorkingSpeed = cui16StartingSpeed;
+int iLeftWorkingSpeed = cui16StartingSpeed;
+int iRightWorkingSpeed = cui16StartingSpeed;
 
 double dForwardSpeed;
 double dReverseSpeed;
