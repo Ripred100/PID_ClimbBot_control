@@ -14,8 +14,9 @@ void setup() {
 
 
    MOT_Init();
-   //setupStepper();
+   SERV_Init();
    ENC_Init();
+   CLM_Init();
    pinMode(ciHeartbeatLED, OUTPUT);
    pinMode(ciPB1, INPUT_PULLUP);
    pinMode(ciPB2, INPUT_PULLUP);

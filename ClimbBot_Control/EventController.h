@@ -1,5 +1,6 @@
 
 unsigned int _DriveIndex = 0;
+unsigned int _ClimbGo = 0;
 
 
 
@@ -15,6 +16,10 @@ boolean EC_IsEventInProgress()
   if(EC_GetCurrentEventID() == 0)
   {
     return ENC_ISMotorRunning();
+  }
+  if(EC_GetCurrentEventID() == 1)
+  {
+    return !ServoLimit;
   }
   
 }
@@ -39,28 +44,28 @@ void EC_DriveEventHandler()
     {
       case 0:
       {
-        MOT_SetDriveDirection(0);
+        MOT_SetDriveDirection(0); // forward
         ENC_SetDistance(200,200);
         _DriveIndex = 1;
       break;
       }
       case 1:
       {
-        MOT_SetDriveDirection(3);
+        MOT_SetDriveDirection(3); // left
         ENC_SetDistance(-200,200);  
         _DriveIndex = 2;
       break;
       }
       case 2:
       {
-        MOT_SetDriveDirection(2);
+        MOT_SetDriveDirection(2); // right
         ENC_SetDistance(200,-200);
         _DriveIndex = 3;
       break;
       }
       case 3:
       {
-        MOT_SetDriveDirection(1);
+        MOT_SetDriveDirection(1); // backward
         ENC_SetDistance(-200,-200);
         _DriveIndex = 4;
 
@@ -77,8 +82,45 @@ void EC_DriveEventHandler()
 }
 
 void EC_ServoEventHandler(){
+
+
+
+  LeftState = digitalRead(ciLimitSwitchLeft);
+  RightState = digitalRead(ciLimitSwitchRight);
   
+  if(LeftState == LOW && RightState == HIGH) {
+    // left motor stops, right keeps going
+  } else if (LeftState == HIGH && RightState == LOW) {
+    // right motor stops, left keeps going
+  } else if (LeftState == LOW && RightState == LOW){
+      
+        topPos += 1;
+        bottomPos -= 1;
+        topServo.write(topPos);
+        bottomServo.write(bottomPos);
+     
+  }
+       if(topPos >= 180 && bottomPos <= 0)
+     {
+        ServoLimit = true;
+        EC_uiCurrentEvent = 2;
+     }
 }
+
+void EC_ClimbEventHandler()
+{
+      if(_ClimbGo == 0)
+  {
+          ledcWrite(8,0);
+          ledcWrite(9,255);// attachinterrupt to the limit switch to stop it after whatever rev
+
+          _ClimbGo = 1;
+           
+           attachInterrupt(ciClimbLimitSwitch, ClimbUpdate, FALLING);
+  }
+}
+
+
 
 
 void EC_MainEventHandler()
@@ -93,10 +135,12 @@ void EC_MainEventHandler()
     }
     case 1: // Servo actuating
     {
+      EC_ServoEventHandler();
       break;
     }
     case 2: // Climbing
     {
+      EC_ClimbEventHandler();
       break;
     }
 
@@ -107,5 +151,5 @@ void EC_MainEventHandler()
 
 void EC_Init()
 {
-  EC_uiCurrentEvent = 0;
+  EC_uiCurrentEvent = 1;
 }

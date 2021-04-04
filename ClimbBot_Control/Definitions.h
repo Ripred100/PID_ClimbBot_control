@@ -39,12 +39,6 @@
 */
 
 
-struct event{
-unsigned char ID;
-
-struct event *nextEvent;
-};
-
 
 
 
@@ -55,7 +49,7 @@ const int ciPB2 = 26;
 const int ciPot1 = A4;    //GPIO 32  - when JP2 has jumper installed Analog pin AD4 is connected to Poteniometer R1
 const int ciPot2 = A7;
 const int ciLimitSwitch = 26;
-const int ciIRDetector = 16;
+const int ciIRDetector = 16; //free pin
 const int ciMotorLeftA = 4;
 const int ciMotorLeftB = 18;
 const int ciMotorRightA = 19;
@@ -67,8 +61,40 @@ const int ciEncoderRightB = 13;
 const int ciSmartLED = 25;
 const int ciStepperMotorDir = 22;
 const int ciStepperMotorStep = 21;
-const int ciServoPin = 15;
-const int ciServoChannel = 10;
+const int ciServoTop = 15;
+const int ciServoBottom = 2;
+const int ciClimbA = 23;
+const int ciClimbB = 26;
+const int ciLimitSwitchLeft = 35;
+const int ciLimitSwitchRight = 34;
+const int ciClimbLimitSwitch = 36; //sensor pin
+
+
+
+// SERVO FILE 
+int topPos = 0;    // variable to store the servo position
+int bottomPos = 180; 
+int servoTop = 15; // Recommended PWM GPIO pins on the ESP32 include 2,4,12-19,21-23,25-27,32-33 
+
+
+int LeftState = 0;
+int RightState = 0;
+
+
+
+boolean ServoLimit = false;
+// SERVO FILE
+
+// CLIMB FILE
+# define maxRev 4 //change value to correct one once tested
+int motorDirection = 0;
+int revolutionCount = 0;
+volatile int ClimbTickCount = 0;
+volatile int ClimbRevolutionCount=0 ;
+int lastSwitchState =0;
+
+
+// CLIMB FILE
 
 
 //Drive Constants
@@ -175,13 +201,20 @@ volatile boolean calibrating = false;
 
 #include <ESP32Servo.h>
 #include <esp_task_wdt.h>
+Servo topServo;  // create servo object to control a servo
+Servo bottomServo; // 16 servo objects can be created on the ESP32
+
 
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
 #include "Servo.h"
+#include "Climb.h"
 #include "Encoder.h"
 #include "Motion.h"
 #include "InputControl.h"
 #include "EventController.h"
+
+
+
 
  Adafruit_NeoPixel SmartLEDs(2, 25, NEO_GRB + NEO_KHZ400);
