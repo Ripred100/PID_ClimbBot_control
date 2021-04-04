@@ -39,6 +39,14 @@
 */
 
 
+struct event{
+unsigned char ID;
+
+struct event *nextEvent;
+};
+
+
+
 
 //Pin assignments
 const int ciHeartbeatLED = 2;
@@ -135,8 +143,12 @@ unsigned long CR1_ulHeartbeatTimerPrevious;
 unsigned long CR1_ulHeartbeatTimerNow;
 
 boolean btToggle = true;
+
 int iButtonState;
 int iLastButtonState = HIGH;
+
+int iLastButtonState2 = HIGH;
+int iButtonState2;
 
 //Main loop Control flags
 boolean btHeartbeat = true;
@@ -154,6 +166,9 @@ const long CR1_clReadTimeout = 220;
 unsigned int EC_uiCurrentEvent;
 
 //Event Controller Flags
+
+//InputControl Flags
+volatile boolean calibrating = false;
 
 
 

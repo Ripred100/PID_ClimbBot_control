@@ -1,4 +1,44 @@
+unsigned int MOT_DriveDirection = 0; // 0-Forward, 1-Backward, 2-Right, 3-Left.
 
+class PID{
+  private:
+  int integralConst;
+  int proportionalConst;
+  int derivativeConst;
+
+  public:
+  int integralFactor;
+  int proportionalFactor;
+  int derivativeFactor;
+
+
+  int error;
+  int errorChange;
+  int prevError;
+
+  PID(int Ki, int Kp, int Kd){
+    integralConst = Ki;
+    proportionalConst = Kp;
+    derivativeConst = Kd;
+  }
+
+   int updatePID(int newError){
+      error = newError; //When error is positive, The left wheel is going faster
+      errorChange = error - prevError; //When Derivative is negative, The error is converging
+
+  ProportionalFactor = error * proportionalConst; //Positive when Left is faster
+  IntegralFactor += error * integralConst; //"Integral" of proportional 
+  DerivativeFactor = errorChange * derivativeConst; //negative when left is faster, but slowing down. 
+
+  prevError = error;
+
+  return  (proportionalFactor + integralFactor + derivativeFactor);
+  }
+
+  
+  
+  
+};
 
 
 void MOT_Init()
@@ -25,9 +65,9 @@ void MOT_Init()
   
 }
 
-void MOT_SetDriveDirection()
+void MOT_SetDriveDirection(unsigned int dir)
 {
-  
+  MOT_DriveDirection = dir;
 }
 
 uint16_t MOT_GetAdjustedSpeed(int wheelID)
@@ -36,11 +76,11 @@ uint16_t MOT_GetAdjustedSpeed(int wheelID)
   
   if(wheelID == 0)//left wheel
   {
-    if((iLeftWorkingSpeed + (CorrectionFactor/2)) <= 65535 && (iLeftWorkingSpeed + (CorrectionFactor/2)) >= 0 )
+    if((iLeftWorkingSpeed - (CorrectionFactor/2)) <= 65535 && (iLeftWorkingSpeed - (CorrectionFactor/2)) >= 0 )
     {
-          return (iLeftWorkingSpeed + (CorrectionFactor/2));
+          return (iLeftWorkingSpeed - (CorrectionFactor/2));
     }
-    else if((iLeftWorkingSpeed + (CorrectionFactor/2)) > 65535)
+    else if((iLeftWorkingSpeed - (CorrectionFactor/2)) > 65535)
     {
       return 65535;
     }
@@ -52,11 +92,11 @@ uint16_t MOT_GetAdjustedSpeed(int wheelID)
   }
   else if(wheelID == 1)//right wheel
   {
-    if((iRightWorkingSpeed - (CorrectionFactor/2)) <= 65535 && (iRightWorkingSpeed - (CorrectionFactor/2)) >= 0 )
+    if((iRightWorkingSpeed + (CorrectionFactor/2)) <= 65535 && (iRightWorkingSpeed + (CorrectionFactor/2)) >= 0 )
     {
-          return (iRightWorkingSpeed - (CorrectionFactor/2));
+          return (iRightWorkingSpeed + (CorrectionFactor/2));
     }
-    else if((iRightWorkingSpeed - (CorrectionFactor/2)) > 65535)
+    else if((iRightWorkingSpeed + (CorrectionFactor/2)) > 65535)
     {
       return 65535;
     }
@@ -81,13 +121,45 @@ void MOT_WriteToMotors()
           uint16_t rightAdjustedSpeed = MOT_GetAdjustedSpeed(1);
 
           Serial.println("Prop: " + String(ProportionalFactor) + "  Der: " + String(DerivativeFactor) + "  Integral: " + String(IntegralFactor));
+
+          switch(MOT_DriveDirection){
+
+            case 0: // forward
+            {
+                      //Forward
+              ledcWrite(6,0); //LeftBackward
+              ledcWrite(7,leftAdjustedSpeed); //Left Forward
+              ledcWrite(4,0); //Right Backward 
+              ledcWrite(5,rightAdjustedSpeed); //Right Forward
+              break;
+            }
+            case 1: // Backward
+            {
+              ledcWrite(6,leftAdjustedSpeed); //LeftBackward
+              ledcWrite(7,0); //Left Forward
+              ledcWrite(4,rightAdjustedSpeed); //Right Backward
+              ledcWrite(5,0); //Right Forward
+              break;
+            }
+            case 2: //Right turn
+            {
+              ledcWrite(6,0); //LeftBackward
+              ledcWrite(7,leftAdjustedSpeed); //Left Forward
+              ledcWrite(4,rightAdjustedSpeed); //Right Backward
+              ledcWrite(5,0); //Right Forward
+              break;
+            }
+            case 3: //Left Turn
+            {
+              ledcWrite(6,leftAdjustedSpeed); //LeftBackward
+              ledcWrite(7,0); //Left Forward
+              ledcWrite(4,0); //Right Backward
+              ledcWrite(5,rightAdjustedSpeed); //Right Forward
+              break;
+            }
+          }
   
-          //Forward
-          ledcWrite(6,0); //LeftBackward
-          ledcWrite(7,leftAdjustedSpeed); //Left Forward
-          ledcWrite(4,0); //Right Backward
-          ledcWrite(5,rightAdjustedSpeed); //Right Forward
-  
+
 }
 
 void MOT_UpdateSpeed()

@@ -1,4 +1,31 @@
- void IC_CheckButtonUpdate(){
+
+void IC_CheckButtonUpdate2(){
+  int iButtonValue2 = digitalRead(ciPB2);
+  if (iButtonValue2 != iLastButtonState2)
+  {
+    Serial.println("Button 2 pressed");
+    CR1_ulLastDebounceTime = millis();
+  }
+
+  if ((millis() - CR1_ulLastDebounceTime) > CR1_clDebounceDelay) {
+    if(iButtonValue2 != iButtonState2){
+      iButtonState2 = iButtonValue2;
+
+      if(iButtonState2 == LOW){
+        calibrating = true;
+        
+        MOT_SetDriveDirection(0);
+        ENC_SetDistance(500,500);
+      }
+    }
+  }
+
+  iLastButtonState2 = iButtonValue2;
+}
+
+
+
+void IC_CheckButtonUpdate(){
  
  int iButtonValue = digitalRead(ciPB1);       // read value of push button 1
   if (iButtonValue != iLastButtonState) {      // if value has changed
@@ -24,7 +51,11 @@
           ucNextMotorStateIndex = 1;
           ucMotorStateIndex = 0; 
           ucMotorState = 0;
-          //move(0);  TO DO !!!!!
+
+      ledcWrite(6,65535);
+      ledcWrite(7,65535);  //stop with braking Left motor 
+      ledcWrite(5,65535);
+      ledcWrite(4,65535);  //stop with braking Right motor 
        }
       
      }

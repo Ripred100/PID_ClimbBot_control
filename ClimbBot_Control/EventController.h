@@ -1,6 +1,10 @@
 
+unsigned int _DriveIndex = 0;
 
-unsigned int EC_GetCurrentEvent()
+
+
+
+unsigned int EC_GetCurrentEventID()
 {
   return EC_uiCurrentEvent;
 }
@@ -8,7 +12,7 @@ unsigned int EC_GetCurrentEvent()
 
 boolean EC_IsEventInProgress()
 {
-  if(EC_GetCurrentEvent() == 0)
+  if(EC_GetCurrentEventID() == 0)
   {
     return ENC_ISMotorRunning();
   }
@@ -22,7 +26,8 @@ void EC_DriveEventHandler()
   CR1_ulMotorTimerNow = millis();
   if(EC_IsEventInProgress())
   {
-    MOT_UpdateSpeed();
+    //MOT_UpdateSpeed(); offloading the PID to the calibration func. in the main loop because i still need to make PID compatible with turns.
+    MOT_WriteToMotors();
     
     
   }
@@ -30,8 +35,48 @@ void EC_DriveEventHandler()
   {
     CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
 
-    ENC_SetDistance(2000, 2000);
+    switch(_DriveIndex)
+    {
+      case 0:
+      {
+        MOT_SetDriveDirection(0);
+        ENC_SetDistance(200,200);
+        _DriveIndex = 1;
+      break;
+      }
+      case 1:
+      {
+        MOT_SetDriveDirection(3);
+        ENC_SetDistance(-200,200);  
+        _DriveIndex = 2;
+      break;
+      }
+      case 2:
+      {
+        MOT_SetDriveDirection(2);
+        ENC_SetDistance(200,-200);
+        _DriveIndex = 3;
+      break;
+      }
+      case 3:
+      {
+        MOT_SetDriveDirection(1);
+        ENC_SetDistance(-200,-200);
+        _DriveIndex = 4;
+
+        EC_uiCurrentEvent = 1;
+      break;
+      }
+      
+      
+
+    }
+
   }
+  
+}
+
+void EC_ServoEventHandler(){
   
 }
 
@@ -39,7 +84,7 @@ void EC_DriveEventHandler()
 void EC_MainEventHandler()
 {
 
-  switch(EC_GetCurrentEvent())
+  switch(EC_GetCurrentEventID())
   {
     case 0: // Driving
     {

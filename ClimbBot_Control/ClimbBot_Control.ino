@@ -18,6 +18,7 @@ void setup() {
    ENC_Init();
    pinMode(ciHeartbeatLED, OUTPUT);
    pinMode(ciPB1, INPUT_PULLUP);
+   pinMode(ciPB2, INPUT_PULLUP);
    pinMode(ciLimitSwitch, INPUT_PULLUP);
 
    SmartLEDs.begin();                          // Initialize Smart LEDs object (required)
@@ -29,6 +30,7 @@ void setup() {
 void loop() {
   // Code that runs outside of main switch case loop
   IC_CheckButtonUpdate();
+  IC_CheckButtonUpdate2();
 
 
   CR1_ulMainTimerNow = micros();
@@ -43,6 +45,7 @@ void loop() {
     {
       if(btRun)
       {
+        Serial.println("main event handler");
         EC_MainEventHandler();
       }
 
@@ -55,7 +58,18 @@ void loop() {
 //----------------------------------------------------------------------------------
     case 1:
     {
-
+      if(calibrating)
+      {
+        Serial.println("Calibrating loop thing");
+        MOT_UpdateSpeed();
+      }
+      if(!btRun && !calibrating)
+      {
+      ledcWrite(6,65535);
+      ledcWrite(7,65535);  //stop with braking Left motor 
+      ledcWrite(5,65535);
+      ledcWrite(4,65535);  //stop with braking Right motor 
+      }
       
         CR1_ucMainTimerCaseCore1 += 1;
       break;
@@ -119,10 +133,29 @@ void loop() {
 //----------------------------------------------------------------------------------
     case 9:
     {
-        SmartLEDs.setPixelColor(0, 25, 0, abs(ENC_vi32LeftOdometer)%50);
-        SmartLEDs.setPixelColor(1, 25, 0, abs(ENC_vi32RightOdometer)%50);
-//        Serial.println("Left : " + String(ENC_vi32LeftOdometer));
-//        Serial.println("Right : " + String(ENC_vi32RightOdometer));
+      if(ENC_vi32LeftOdometer > 0)
+    {
+        SmartLEDs.setPixelColor(0, 0, 0, abs(ENC_vi32LeftOdometer)%50);
+    }
+    else
+    {
+      SmartLEDs.setPixelColor(0, abs(ENC_vi32LeftOdometer)%50, 0, 0);
+    }
+    
+
+      if(ENC_vi32RightOdometer > 0)
+    {
+        SmartLEDs.setPixelColor(1, 0, 0, abs(ENC_vi32RightOdometer)%50);
+    }
+    else
+    {
+      SmartLEDs.setPixelColor(1, abs(ENC_vi32LeftOdometer)%50, 0, 0);
+    }
+    
+    
+
+        Serial.println("Left : " + String(ENC_vi32LeftOdometer));
+        Serial.println("Right : " + String(ENC_vi32RightOdometer));
 //        Serial.println("Correction : " + String(CorrectionFactor));
         SmartLEDs.show();
 
