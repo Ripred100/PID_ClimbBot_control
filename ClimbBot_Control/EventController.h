@@ -27,6 +27,7 @@ boolean EC_IsEventInProgress()
 
 void EC_DriveEventHandler()
 {
+  Serial.println("Drive event");
   
   CR1_ulMotorTimerNow = millis();
   if(EC_IsEventInProgress())
@@ -46,31 +47,59 @@ void EC_DriveEventHandler()
       {
         MOT_SetDriveDirection(0); // forward
         ENC_SetDistance(200,200);
+        ENC_ClearOdometers();
+        
         _DriveIndex = 1;
       break;
       }
       case 1:
       {
         MOT_SetDriveDirection(3); // left
+        ENC_ClearOdometers();
         ENC_SetDistance(-200,200);  
+
         _DriveIndex = 2;
       break;
       }
       case 2:
       {
-        MOT_SetDriveDirection(2); // right
-        ENC_SetDistance(200,-200);
+        MOT_SetDriveDirection(0); // forward
+        ENC_SetDistance(200,200);
+        ENC_ClearOdometers();
+        
         _DriveIndex = 3;
       break;
       }
       case 3:
       {
         MOT_SetDriveDirection(1); // backward
+        ENC_ClearOdometers();
         ENC_SetDistance(-200,-200);
         _DriveIndex = 4;
-
-        EC_uiCurrentEvent = 1;
+  
       break;
+      }
+      case 4:
+      {
+        MOT_SetDriveDirection(2); // right
+        ENC_ClearOdometers();
+        ENC_SetDistance(200,-200); 
+        
+        _DriveIndex = 5;
+        break;
+      }
+      case 5:
+      {
+        MOT_SetDriveDirection(1); // backward
+        ENC_ClearOdometers();
+        ENC_SetDistance(-200,-200);
+        _DriveIndex = 6;
+        break;
+      }
+      default:
+      {
+        EC_uiCurrentEvent = 1;
+        break;
       }
       
       
@@ -83,10 +112,10 @@ void EC_DriveEventHandler()
 
 void EC_ServoEventHandler(){
 
+        Serial.println("servo event");
 
-
-  LeftState = digitalRead(ciLimitSwitchLeft);
-  RightState = digitalRead(ciLimitSwitchRight);
+  int LeftState = digitalRead(ciLimitSwitchLeft);
+  int RightState = digitalRead(ciLimitSwitchRight);
   
   if(LeftState == LOW && RightState == HIGH) {
     // left motor stops, right keeps going
@@ -94,29 +123,41 @@ void EC_ServoEventHandler(){
     // right motor stops, left keeps going
   } else if (LeftState == LOW && RightState == LOW){
       
+//        topPos += 1;
+//        bottomPos -= 1;
+//        topServo.write(topPos);
+//        bottomServo.write(bottomPos);
+
+      while(topPos <= 180 && bottomPos >= 0){
         topPos += 1;
         bottomPos -= 1;
         topServo.write(topPos);
         bottomServo.write(bottomPos);
-     
-  }
-       if(topPos >= 180 && bottomPos <= 0)
-     {
-        ServoLimit = true;
-        EC_uiCurrentEvent = 2;
+        delay(10);
+        Serial.println("servo actuating");
      }
+             ServoLimit = true;
+        EC_uiCurrentEvent = 2;
+  }
+//       if(topPos >= 180 && bottomPos <= 0)
+//     {
+//                ServoLimit = true;
+//        EC_uiCurrentEvent = 2;
+//     }
 }
 
 void EC_ClimbEventHandler()
 {
+  
       if(_ClimbGo == 0)
   {
-          ledcWrite(8,0);
-          ledcWrite(9,255);// attachinterrupt to the limit switch to stop it after whatever rev
+    Serial.println("climb event");
+          ledcWrite(2,0);
+          ledcWrite(3,255);// attachinterrupt to the limit switch to stop it after whatever rev
 
           _ClimbGo = 1;
            
-           attachInterrupt(ciClimbLimitSwitch, ClimbUpdate, FALLING);
+           //attachInterrupt(ciClimbLimitSwitch, ClimbUpdate, FALLING);
   }
 }
 
@@ -126,7 +167,7 @@ void EC_ClimbEventHandler()
 void EC_MainEventHandler()
 {
 
-  switch(EC_GetCurrentEventID())
+  switch(EC_uiCurrentEvent)
   {
     case 0: // Driving
     {
@@ -151,5 +192,5 @@ void EC_MainEventHandler()
 
 void EC_Init()
 {
-  EC_uiCurrentEvent = 1;
+  EC_uiCurrentEvent = 0;
 }

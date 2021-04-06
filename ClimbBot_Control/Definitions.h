@@ -48,7 +48,6 @@ const int ciPB1 = 27;
 const int ciPB2 = 26;      
 const int ciPot1 = A4;    //GPIO 32  - when JP2 has jumper installed Analog pin AD4 is connected to Poteniometer R1
 const int ciPot2 = A7;
-const int ciLimitSwitch = 26;
 const int ciIRDetector = 16; //free pin
 const int ciMotorLeftA = 4;
 const int ciMotorLeftB = 18;
@@ -77,8 +76,7 @@ int bottomPos = 180;
 int servoTop = 15; // Recommended PWM GPIO pins on the ESP32 include 2,4,12-19,21-23,25-27,32-33 
 
 
-int LeftState = 0;
-int RightState = 0;
+
 
 
 
@@ -114,6 +112,8 @@ double dRightSpeed;
 uint16_t CR1_ui16WheelSpeed;
 uint16_t CR1_ui16LeftWheelSpeed;
 uint16_t CR1_ui16RightWheelSpeed;
+
+
 
 //PID Variables (In Motion)
 int CorrectionFactor = 0;
@@ -205,6 +205,7 @@ Servo topServo;  // create servo object to control a servo
 Servo bottomServo; // 16 servo objects can be created on the ESP32
 
 
+
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
 #include "Servo.h"
@@ -213,6 +214,7 @@ Servo bottomServo; // 16 servo objects can be created on the ESP32
 #include "Motion.h"
 #include "InputControl.h"
 #include "EventController.h"
+
 
 
 

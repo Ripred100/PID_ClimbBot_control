@@ -6,7 +6,6 @@ class PID{
   int proportionalConst;
   int derivativeConst;
 
-  public:
   int integralFactor;
   int proportionalFactor;
   int derivativeFactor;
@@ -16,14 +15,24 @@ class PID{
   int errorChange;
   int prevError;
 
-  PID(int Ki, int Kp, int Kd){
+  int leftForwardDirection;
+  int rightForwardDirection;
+
+  public:
+
+  PID(int Kp, int Ki, int Kd, int leftForward, int rightForward){
     integralConst = Ki;
     proportionalConst = Kp;
     derivativeConst = Kd;
+    leftForwardDirection = leftForward;
+    rightForwardDirection = rightForward;
+    
+    
   }
 
-   int updatePID(int newError){
-      error = newError; //When error is positive, The left wheel is going faster
+   int updatePID(int leftOdometer, int rightOdometer){
+
+      error = (leftOdometer*leftForwardDirection) - (rightOdometer*rightForwardDirection);
       errorChange = error - prevError; //When Derivative is negative, The error is converging
 
   ProportionalFactor = error * proportionalConst; //Positive when Left is faster
@@ -40,9 +49,17 @@ class PID{
   
 };
 
+extern  PID PIDForward(1000, 15, 40, 1, 1);
+extern  PID PIDBackward(1000, 15, 40, -1, -1);
+extern  PID PIDRight(1000, 15, 40, 1, -1);
+extern  PID PIDLeft(1000, 15, 40, -1, 1);
+extern PID *CurrentPID = &PIDForward;
+
 
 void MOT_Init()
 {
+
+  
   
   dForwardSpeed = 49152;  // max 65536, 65536*0.75 = 49152
   dReverseSpeed = 49152;
@@ -62,16 +79,50 @@ void MOT_Init()
   ledcSetup(6, 20000, 16);
   ledcSetup(5, 20000, 16);
   ledcSetup(4, 20000, 16);
+
+
   
 }
 
 void MOT_SetDriveDirection(unsigned int dir)
 {
   MOT_DriveDirection = dir;
+
+  switch(dir)
+  {
+    case 0:
+    {
+      CurrentPID = &PIDForward;
+      break;
+    }
+    case 1:
+    {
+      CurrentPID = &PIDBackward;
+      break;
+    }
+    case 2:
+    {
+      CurrentPID = &PIDRight;
+      break;
+    }
+    case 3:
+    {
+      CurrentPID = &PIDLeft;
+      break;
+    }
+  }
+
+}
+
+
+int MOT_CalculateError(){
+  
 }
 
 uint16_t MOT_GetAdjustedSpeed(int wheelID)
 {
+
+  CorrectionFactor = CurrentPID->updatePID(ENC_vi32LeftOdometer, ENC_vi32RightOdometer);
 
   
   if(wheelID == 0)//left wheel

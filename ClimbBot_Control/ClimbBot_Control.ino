@@ -17,21 +17,24 @@ void setup() {
    SERV_Init();
    ENC_Init();
    CLM_Init();
-   pinMode(ciHeartbeatLED, OUTPUT);
+   EC_Init();
+
    pinMode(ciPB1, INPUT_PULLUP);
-   pinMode(ciPB2, INPUT_PULLUP);
-   pinMode(ciLimitSwitch, INPUT_PULLUP);
+   //pinMode(ciPB2, INPUT_PULLUP);
+
 
    SmartLEDs.begin();                          // Initialize Smart LEDs object (required)
    SmartLEDs.clear();                          // Set all pixel colours to off
    SmartLEDs.show();                           // Send the updated pixel colours to the hardware
+
+
 
 }
 
 void loop() {
   // Code that runs outside of main switch case loop
   IC_CheckButtonUpdate();
-  IC_CheckButtonUpdate2();
+  //IC_CheckButtonUpdate2();
 
 
   CR1_ulMainTimerNow = micros();
@@ -59,18 +62,18 @@ void loop() {
 //----------------------------------------------------------------------------------
     case 1:
     {
-      if(calibrating)
-      {
-        Serial.println("Calibrating loop thing");
-        MOT_UpdateSpeed();
-      }
-      if(!btRun && !calibrating)
-      {
-      ledcWrite(6,65535);
-      ledcWrite(7,65535);  //stop with braking Left motor 
-      ledcWrite(5,65535);
-      ledcWrite(4,65535);  //stop with braking Right motor 
-      }
+//      if(calibrating == 1)
+//      {
+//        Serial.println("Calibrating loop thing");
+//        //MOT_UpdateSpeed();
+//      }
+//      if(!btRun && !calibrating)
+//      {
+//      ledcWrite(6,65535);
+//      ledcWrite(7,65535);  //stop with braking Left motor 
+//      ledcWrite(5,65535);
+//      ledcWrite(4,65535);  //stop with braking Right motor 
+//      }
       
         CR1_ucMainTimerCaseCore1 += 1;
       break;
@@ -170,14 +173,14 @@ void loop() {
 
 
   // Heartbeat LED
- CR1_ulHeartbeatTimerNow = millis();
- if(CR1_ulHeartbeatTimerNow - CR1_ulHeartbeatTimerPrevious >= CR1_ciHeartbeatInterval)
- {
-    CR1_ulHeartbeatTimerPrevious = CR1_ulHeartbeatTimerNow;
-    btHeartbeat = !btHeartbeat;
-    digitalWrite(ciHeartbeatLED, btHeartbeat);
-   // Serial.println((vui32test2 - vui32test1)* 3 );
- }
+// CR1_ulHeartbeatTimerNow = millis();
+// if(CR1_ulHeartbeatTimerNow - CR1_ulHeartbeatTimerPrevious >= CR1_ciHeartbeatInterval)
+// {
+//    CR1_ulHeartbeatTimerPrevious = CR1_ulHeartbeatTimerNow;
+//    btHeartbeat = !btHeartbeat;
+//    digitalWrite(ciHeartbeatLED, btHeartbeat);
+//   // Serial.println((vui32test2 - vui32test1)* 3 );
+// }
 
 }
 }

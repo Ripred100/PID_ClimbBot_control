@@ -191,6 +191,12 @@ void ENC_Init()
   
 }
 
+void ENC_ClearOdometers(){
+    ENC_vi32LeftOdometer = 0;
+    ENC_vi32RightOdometer = 0;
+    
+}
+
 void ENC_ClearENC_vi32LeftOdometer()
 {
   ENC_vi32LeftOdometer = 0;

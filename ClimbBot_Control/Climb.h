@@ -5,11 +5,11 @@ void CLM_Init(){
 
   pinMode(ciClimbLimitSwitch, INPUT_PULLUP);
 
-  ledcAttachPin(ciClimbA, 8);
-  ledcAttachPin(ciClimbB, 9);
+  ledcAttachPin(ciClimbA, 2);
+  ledcAttachPin(ciClimbB, 3);
 
-  ledcSetup(1, 20000, 8); // 20mS PWM, 8-bit resolution
-  ledcSetup(2, 20000, 8);
+  ledcSetup(2, 20000, 8); // 20mS PWM, 8-bit resolution
+  ledcSetup(3, 20000, 8);
   
 }
 
@@ -25,17 +25,17 @@ void IRAM_ATTR ClimbUpdate() {
   if(ClimbRevolutionCount == maxRev){
 
     //stop motor
-          ledcWrite(9,0);
-          ledcWrite(8,0);
+          ledcWrite(3,0);
+          ledcWrite(2,0);
 
   delay(200);
    //go down
-          ledcWrite(8,100);
-          ledcWrite(9,0);
+          ledcWrite(2,100);
+          ledcWrite(3,0);
   delay(500);
 
-  ledcWrite(8,0);
-  ledcWrite(9,0);
+  ledcWrite(2,0);
+  ledcWrite(3,0);
           
 }
 }
