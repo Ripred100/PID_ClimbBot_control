@@ -20,6 +20,8 @@ class PID{
 
   public:
 
+  char PIDName[10];
+
   PID(int Kp, int Ki, int Kd, int leftForward, int rightForward){
     integralConst = Ki;
     proportionalConst = Kp;
@@ -32,16 +34,16 @@ class PID{
 
    int updatePID(int leftOdometer, int rightOdometer){
 
-      error = (leftOdometer*leftForwardDirection) - (rightOdometer*rightForwardDirection);
-      errorChange = error - prevError; //When Derivative is negative, The error is converging
+      this->error = (leftOdometer*this->leftForwardDirection) - (rightOdometer*this->rightForwardDirection);
+      this->errorChange = this->error - this->prevError; //When Derivative is negative, The error is converging
 
-  ProportionalFactor = error * proportionalConst; //Positive when Left is faster
-  IntegralFactor += error * integralConst; //"Integral" of proportional 
-  DerivativeFactor = errorChange * derivativeConst; //negative when left is faster, but slowing down. 
+  this->proportionalFactor = this->error * this->proportionalConst; //Positive when Left is faster
+  this->integralFactor += this->error * this->integralConst; //"Integral" of proportional 
+  this->derivativeFactor = this->errorChange * this->derivativeConst; //negative when left is faster, but slowing down. 
 
-  prevError = error;
+  this->prevError = this->error;
 
-  return  (proportionalFactor + integralFactor + derivativeFactor);
+  return  (this->proportionalFactor + this->integralFactor + this->derivativeFactor);
   }
 
   
@@ -50,16 +52,23 @@ class PID{
 };
 
 extern  PID PIDForward(1000, 15, 40, 1, 1);
+
 extern  PID PIDBackward(1000, 15, 40, -1, -1);
+
 extern  PID PIDRight(1000, 15, 40, 1, -1);
+
 extern  PID PIDLeft(1000, 15, 40, -1, 1);
+
+
 extern PID *CurrentPID = &PIDForward;
 
 
 void MOT_Init()
 {
-
-  
+  strcpy (PIDRight.PIDName,"right");
+  strcpy (PIDLeft.PIDName,"left");
+  strcpy (PIDBackward.PIDName,"backward");
+  strcpy (PIDForward.PIDName,"forward");
   
   dForwardSpeed = 49152;  // max 65536, 65536*0.75 = 49152
   dReverseSpeed = 49152;
@@ -92,21 +101,25 @@ void MOT_SetDriveDirection(unsigned int dir)
   {
     case 0:
     {
+      Serial.println("Going forward");
       CurrentPID = &PIDForward;
       break;
     }
     case 1:
     {
+      Serial.println("Going backward");
       CurrentPID = &PIDBackward;
       break;
     }
     case 2:
     {
+      Serial.println("Going right");
       CurrentPID = &PIDRight;
       break;
     }
     case 3:
     {
+      Serial.println("Going left");
       CurrentPID = &PIDLeft;
       break;
     }
@@ -116,13 +129,13 @@ void MOT_SetDriveDirection(unsigned int dir)
 
 
 int MOT_CalculateError(){
-  
+  CorrectionFactor = CurrentPID->updatePID(ENC_vi32LeftOdometer, ENC_vi32RightOdometer);
 }
 
 uint16_t MOT_GetAdjustedSpeed(int wheelID)
 {
 
-  CorrectionFactor = CurrentPID->updatePID(ENC_vi32LeftOdometer, ENC_vi32RightOdometer);
+
 
   
   if(wheelID == 0)//left wheel
@@ -168,11 +181,19 @@ uint16_t MOT_GetAdjustedSpeed(int wheelID)
 void MOT_WriteToMotors()
 {
 
+                  
+  Serial.print("Updating Speed with PID profile: ");
+  Serial.print((*CurrentPID).PIDName);
+  Serial.print("\n");
+
+  
+                MOT_CalculateError();
           uint16_t leftAdjustedSpeed = MOT_GetAdjustedSpeed(0);
+          Serial.println(leftAdjustedSpeed);
           uint16_t rightAdjustedSpeed = MOT_GetAdjustedSpeed(1);
+          Serial.println(rightAdjustedSpeed);
 
-          Serial.println("Prop: " + String(ProportionalFactor) + "  Der: " + String(DerivativeFactor) + "  Integral: " + String(IntegralFactor));
-
+        
           switch(MOT_DriveDirection){
 
             case 0: // forward

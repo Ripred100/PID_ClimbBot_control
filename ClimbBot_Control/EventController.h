@@ -27,12 +27,12 @@ boolean EC_IsEventInProgress()
 
 void EC_DriveEventHandler()
 {
-  Serial.println("Drive event");
+  
   
   CR1_ulMotorTimerNow = millis();
   if(EC_IsEventInProgress())
   {
-    //MOT_UpdateSpeed(); offloading the PID to the calibration func. in the main loop because i still need to make PID compatible with turns.
+      Serial.println("Write To motors");
     MOT_WriteToMotors();
     
     
@@ -40,14 +40,16 @@ void EC_DriveEventHandler()
   else if (CR1_ulMotorTimerNow - CR1_ulMotorTimerPrevious >= CR1_ciMotorRunTime && !(EC_IsEventInProgress()))
   {
     CR1_ulMotorTimerPrevious = CR1_ulMotorTimerNow;
+    Serial.println("Switch Statement");
 
     switch(_DriveIndex)
     {
       case 0:
       {
         MOT_SetDriveDirection(0); // forward
-        ENC_SetDistance(200,200);
         ENC_ClearOdometers();
+        ENC_SetDistance(200,200);
+        
         
         _DriveIndex = 1;
       break;
@@ -56,7 +58,7 @@ void EC_DriveEventHandler()
       {
         MOT_SetDriveDirection(3); // left
         ENC_ClearOdometers();
-        ENC_SetDistance(-200,200);  
+        ENC_SetDistance(-40,40);  
 
         _DriveIndex = 2;
       break;
@@ -64,8 +66,9 @@ void EC_DriveEventHandler()
       case 2:
       {
         MOT_SetDriveDirection(0); // forward
-        ENC_SetDistance(200,200);
         ENC_ClearOdometers();
+        ENC_SetDistance(200,200);
+        
         
         _DriveIndex = 3;
       break;
@@ -83,7 +86,7 @@ void EC_DriveEventHandler()
       {
         MOT_SetDriveDirection(2); // right
         ENC_ClearOdometers();
-        ENC_SetDistance(200,-200); 
+        ENC_SetDistance(40,-40); 
         
         _DriveIndex = 5;
         break;
@@ -98,6 +101,10 @@ void EC_DriveEventHandler()
       }
       default:
       {
+      ledcWrite(6,65535);
+      ledcWrite(7,65535);  //stop with braking Left motor 
+      ledcWrite(5,65535);
+      ledcWrite(4,65535);  //stop with braking Right motor 
         EC_uiCurrentEvent = 1;
         break;
       }

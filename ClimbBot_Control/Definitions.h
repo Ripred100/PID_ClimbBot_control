@@ -159,7 +159,7 @@ unsigned long CR1_ulFlagTimerPrevious;
 unsigned long CR1_ulFlagTimerNow;
 unsigned char ucFlagStateIndex = 0;
 
-unsigned long CR1_ulMotorTimerPrevious;
+volatile unsigned long CR1_ulMotorTimerPrevious;
 unsigned long CR1_ulMotorTimerNow;
 unsigned char ucNextMotorStateIndex = 1;
 unsigned char ucMotorStateIndex = 0;
@@ -184,7 +184,7 @@ boolean btRun = false;
 //Main Loop Timer utils.
 const int CR1_ciMainTimer =  1000;
 const int CR1_ciHeartbeatInterval = 500;
-const int CR1_ciMotorRunTime = 1000;
+const int CR1_ciMotorRunTime = 2000;
 const long CR1_clDebounceDelay = 50;
 const long CR1_clReadTimeout = 220;
 

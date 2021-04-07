@@ -9,7 +9,7 @@
 void setup() {
 
   
-  Serial.begin(9600); 
+  Serial.begin(115200); 
  
 
 
@@ -49,7 +49,7 @@ void loop() {
     {
       if(btRun)
       {
-        Serial.println("main event handler");
+
         EC_MainEventHandler();
       }
 
@@ -158,8 +158,7 @@ void loop() {
     
     
 
-        Serial.println("Left : " + String(ENC_vi32LeftOdometer));
-        Serial.println("Right : " + String(ENC_vi32RightOdometer));
+        //Serial.println("Left : " + String(ENC_vi32LeftOdometer) + "Right : " + String(ENC_vi32RightOdometer));
 //        Serial.println("Correction : " + String(CorrectionFactor));
         SmartLEDs.show();
 

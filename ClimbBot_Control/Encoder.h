@@ -37,15 +37,14 @@ void ENC_CheckDistance()
       ENC_btLeftMotorRunningFlag = false;
       ENC_btRightMotorRunningFlag = false;
 
-            if(calibrating)
-      {
-        calibrating = false;
-      }
 
       ledcWrite(6,65535);
       ledcWrite(7,65535);  //stop with braking Left motor 
       ledcWrite(5,65535);
       ledcWrite(4,65535);  //stop with braking Right motor 
+
+      
+      
 
 
       
@@ -62,17 +61,16 @@ void ENC_CheckDistance()
       ENC_btRightMotorRunningFlag = false;
 
             
-      if(calibrating)
-      {
-        calibrating = false;
-      }
+
 
       ledcWrite(6,65535);
       ledcWrite(7,65535);  //stop with braking Left motor 
       ledcWrite(5,65535);
       ledcWrite(4,65535);  //stop with braking Right motor 
 
+
       
+  
     }
     
   }
