@@ -50,7 +50,7 @@ class PID{
   
   
 };
-
+//Initializing all PID profile objects 
 extern  PID PIDForward(1000, 10, 60, 1, 1);
 
 extern  PID PIDBackward(1000, 15, 40, -1, -1);
@@ -93,7 +93,7 @@ void MOT_Init()
   
 }
 
-void MOT_SetDriveDirection(unsigned int dir)
+void MOT_SetDriveDirection(unsigned int dir) //sets 
 {
   MOT_DriveDirection = dir;
 

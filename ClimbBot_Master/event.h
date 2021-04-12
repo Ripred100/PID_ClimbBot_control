@@ -1,6 +1,9 @@
 //Anuar Saenger Gomez 
 //Event system code for dynamic event handling.
 
+//todo 
+//This is the event controller sample class. 
+
 
 class Event
 {

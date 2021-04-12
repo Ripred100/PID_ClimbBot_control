@@ -1,5 +1,7 @@
+//Just button control 
 
-void IC_CheckButtonUpdate2(){
+
+void IC_CheckButtonUpdate2(){ // not used
   int iButtonValue2 = digitalRead(ciPB2);
   if (iButtonValue2 != iLastButtonState2)
   {

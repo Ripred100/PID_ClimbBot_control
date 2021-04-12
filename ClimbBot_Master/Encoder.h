@@ -1,4 +1,4 @@
-
+// All encoder functions. Very similar to lab 5 code with some reformating
 
 
 

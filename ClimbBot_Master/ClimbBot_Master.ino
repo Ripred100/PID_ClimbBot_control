@@ -67,18 +67,7 @@ void loop() {
 //----------------------------------------------------------------------------------
     case 1:
     {
-//      if(calibrating == 1)
-//      {
-//        //Serial.println("Calibrating loop thing");
-//        //MOT_UpdateSpeed();
-//      }
-//      if(!btRun && !calibrating)
-//      {
-//      ledcWrite(6,65535);
-//      ledcWrite(7,65535);  //stop with braking Left motor 
-//      ledcWrite(5,65535);
-//      ledcWrite(4,65535);  //stop with braking Right motor 
-//      }
+
       
         CR1_ucMainTimerCaseCore1 += 1;
       break;
