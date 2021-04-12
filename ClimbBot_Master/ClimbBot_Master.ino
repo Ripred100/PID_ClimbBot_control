@@ -51,7 +51,12 @@ void loop() {
       {
 
         EC_MainEventHandler();
+        
       }
+      ////Serial.print("Right: ");
+     // //Serial.println(ENC_vi32RightOdometer);
+        ////Serial.println("right: " + ENC_vi32RightOdometer);
+      ////Serial.println("");
 
     
 
@@ -64,7 +69,7 @@ void loop() {
     {
 //      if(calibrating == 1)
 //      {
-//        Serial.println("Calibrating loop thing");
+//        //Serial.println("Calibrating loop thing");
 //        //MOT_UpdateSpeed();
 //      }
 //      if(!btRun && !calibrating)
@@ -98,7 +103,6 @@ void loop() {
     case 4:
     {
 
-      
         CR1_ucMainTimerCaseCore1 += 1;
       break;
     }
@@ -139,27 +143,27 @@ void loop() {
     {
       if(ENC_vi32LeftOdometer > 0)
     {
-        SmartLEDs.setPixelColor(0, 0, 0, abs(ENC_vi32LeftOdometer)%50);
-    }
-    else
-    {
-      SmartLEDs.setPixelColor(0, abs(ENC_vi32LeftOdometer)%50, 0, 0);
-    }
-    
-
-      if(ENC_vi32RightOdometer > 0)
-    {
-        SmartLEDs.setPixelColor(1, 0, 0, abs(ENC_vi32RightOdometer)%50);
+        SmartLEDs.setPixelColor(1, 0, 0, abs(ENC_vi32LeftOdometer)%50);
     }
     else
     {
       SmartLEDs.setPixelColor(1, abs(ENC_vi32LeftOdometer)%50, 0, 0);
     }
     
+
+      if(ENC_vi32RightOdometer > 0)
+    {
+        SmartLEDs.setPixelColor(0, 0, 0, abs(ENC_vi32RightOdometer)%50);
+    }
+    else
+    {
+      SmartLEDs.setPixelColor(0, abs(ENC_vi32LeftOdometer)%50, 0, 0);
+    }
+    
     
 
-        Serial.println("Left : " + String(ENC_vi32LeftOdometer) + "Right : " + String(ENC_vi32RightOdometer));
-//        Serial.println("Correction : " + String(CorrectionFactor));
+        //Serial.println("Left : " + String(ENC_vi32LeftOdometer) + "Right : " + String(ENC_vi32RightOdometer));
+//        //Serial.println("Correction : " + String(CorrectionFactor));
         SmartLEDs.show();
 
         CR1_ucMainTimerCaseCore1 = 0;
@@ -178,7 +182,7 @@ void loop() {
 //    CR1_ulHeartbeatTimerPrevious = CR1_ulHeartbeatTimerNow;
 //    btHeartbeat = !btHeartbeat;
 //    digitalWrite(ciHeartbeatLED, btHeartbeat);
-//   // Serial.println((vui32test2 - vui32test1)* 3 );
+//   // //Serial.println((vui32test2 - vui32test1)* 3 );
 // }
 
 }

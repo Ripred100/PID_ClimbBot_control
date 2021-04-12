@@ -40,14 +40,15 @@
 
 
 
+
+
 //Pin assignments
 const int ciHeartbeatLED = 2;
 const int ciPB1 = 27;     
 const int ciPB2 = 26;      
 const int ciPot1 = A4;    //GPIO 32  - when JP2 has jumper installed Analog pin AD4 is connected to Poteniometer R1
 const int ciPot2 = A7;
-const int ciLimitSwitch = 26;
-const int ciIRDetector = 16;
+const int ciIRDetector = 16; //free pin
 const int ciMotorLeftA = 4;
 const int ciMotorLeftB = 18;
 const int ciMotorRightA = 19;
@@ -59,22 +60,91 @@ const int ciEncoderRightB = 13;
 const int ciSmartLED = 25;
 const int ciStepperMotorDir = 22;
 const int ciStepperMotorStep = 21;
-const int ciServoPin = 15;
-const int ciServoChannel = 10;
+const int ciServoTop = 15;
+const int ciServoBottom = 2;
+const int ciClimbA = 23;//
+const int ciClimbB = 26;//
+const int ciLimitSwitchLeft = 35;
+const int ciLimitSwitchRight = 34;
+const int ciClimbLimitSwitch = 36; //sensor pin
+
+
+
+// SERVO FILE 
+int topPos = 0;    // variable to store the servo position
+int bottomPos = 180; 
+int servoTop = 15; // Recommended PWM GPIO pins on the ESP32 include 2,4,12-19,21-23,25-27,32-33 
+
+
+
+
+
+
+boolean ServoLimit = false;
+// SERVO FILE
+
+// CLIMB FILE
+# define maxRev 4 //change value to correct one once tested
+int motorDirection = 0;
+int revolutionCount = 0;
+volatile int ClimbTickCount = 0;
+volatile int ClimbRevolutionCount=0 ;
+int lastSwitchState =0;
+
+
+// CLIMB FILE
 
 
 //Drive Constants
 const uint8_t ci8RightTurn = 27;
 const uint8_t ci8LeftTurn = 26;
+const uint16_t cui16StartingSpeed = 35000;
+const uint16_t cui16TurningSpeed = 40000;
 
-uint8_t CR1_ui8WheelSpeed;
-uint8_t CR1_ui8WheelSpeedAdjustmentFactor;
-uint8_t CR1_ui8LeftWheelSpeed;
-uint8_t CR1_ui8RightWheelSpeed;
+//Drive Variables
+int iLeftWorkingSpeed = cui16StartingSpeed;
+int iRightWorkingSpeed = cui16StartingSpeed;
 
+double dForwardSpeed;
+double dReverseSpeed;
+double dLeftSpeed;
+double dRightSpeed;
+
+uint16_t CR1_ui16WheelSpeed;
+uint16_t CR1_ui16LeftWheelSpeed;
+uint16_t CR1_ui16RightWheelSpeed;
+
+
+
+//PID Variables (In Motion)
+int CorrectionFactor = 0;
+
+int ProportionalFactor;
+int IntegralFactor;
+int DerivativeFactor;
+//--------------------------------------------------------------- IMPORTANT----------------- //These are the PID control Constants. Look at MOT_UpdateSpeed() for use
+// Good PID explination: https://www.youtube.com/watch?v=fusr9eTceEo
+int ProportionalCoeff = 1000;
+int IntegralCoeff = 15;
+int DerivativeCoeff = 40; 
+//---------------------------------------------------------------------------------
 //Drive Flags
 volatile boolean btMotorTimerPriorityFlag = false; //does distance (false) or MotorRunTime (true) take priority for driving?
 
+//Encoder Variables
+ volatile int32_t ENC_vi32LeftOdometer;
+ volatile int32_t ENC_vi32RightOdometer;
+
+ volatile int32_t ENC_vi32LeftOdometerCompare;
+ volatile int32_t ENC_vi32RightOdometerCompare;
+
+ int32_t MOT_i32EncoderErrorChange;
+ int32_t MOT_i32EncoderError = 0;
+ int32_t MOT_i32OldEncoderError = 0;
+
+//Encoder Flags
+ volatile boolean ENC_btLeftMotorRunningFlag;
+ volatile boolean ENC_btRightMotorRunningFlag;
 
 //Main Loop variables
 unsigned char CR1_ucMainTimerCaseCore1;
@@ -90,17 +160,22 @@ unsigned long CR1_ulFlagTimerPrevious;
 unsigned long CR1_ulFlagTimerNow;
 unsigned char ucFlagStateIndex = 0;
 
-unsigned long CR1_ulMotorTimerPrevious;
+volatile unsigned long CR1_ulMotorTimerPrevious;
 unsigned long CR1_ulMotorTimerNow;
 unsigned char ucNextMotorStateIndex = 1;
 unsigned char ucMotorStateIndex = 0;
+unsigned char ucMotorState = 0;
 
 unsigned long CR1_ulHeartbeatTimerPrevious;
 unsigned long CR1_ulHeartbeatTimerNow;
 
 boolean btToggle = true;
+
 int iButtonState;
 int iLastButtonState = HIGH;
+
+int iLastButtonState2 = HIGH;
+int iButtonState2;
 
 //Main loop Control flags
 boolean btHeartbeat = true;
@@ -110,13 +185,39 @@ boolean btRun = false;
 //Main Loop Timer utils.
 const int CR1_ciMainTimer =  1000;
 const int CR1_ciHeartbeatInterval = 500;
-const int CR1_ciMotorRunTime = 1000;
+const int CR1_ciMotorRunTime = 2000;
 const long CR1_clDebounceDelay = 50;
 const long CR1_clReadTimeout = 220;
 
+//Event Controller Variables
+unsigned int EC_uiCurrentEvent;
+
+//Event Controller Flags
+
+//InputControl Flags
+volatile boolean calibrating = false;
+
+
+
+
 #include <ESP32Servo.h>
 #include <esp_task_wdt.h>
+Servo topServo;  // create servo object to control a servo
+Servo bottomServo; // 16 servo objects can be created on the ESP32
+
+
 
 #include <Adafruit_NeoPixel.h>
 #include <Math.h>
 #include "Servo.h"
+#include "Climb.h"
+#include "Encoder.h"
+#include "Motion.h"
+#include "InputControl.h"
+#include "EventController.h"
+
+
+
+
+
+ Adafruit_NeoPixel SmartLEDs(2, 25, NEO_GRB + NEO_KHZ400);
